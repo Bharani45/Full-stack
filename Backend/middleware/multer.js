@@ -1,21 +1,20 @@
+// Backend/middleware/multer.js
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY,
+});
 
-// Optional: Ensure uploads folder exists
-const uploadPath = "uploads/";
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath);
-}
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadPath); // 👈 Save files to /uploads
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + ext); // 👈 Safer & unique file names
+// Storage engine that uploads directly to Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "vendor_images", // optional folder in your Cloudinary account
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    transformation: [{ width: 500, height: 500, crop: "limit" }], // optional
   },
 });
 

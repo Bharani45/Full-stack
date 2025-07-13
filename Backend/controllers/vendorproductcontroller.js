@@ -1,6 +1,7 @@
 import productmodel from '../models/productmodel.js';
 import cloudinary from 'cloudinary';
 
+
 const vendoradd = async (req, res) => {
   try {
     const { name, description, category, subcategory, price, sizes, bestseller, vendorEmail } = req.body;
@@ -9,27 +10,21 @@ const vendoradd = async (req, res) => {
       return res.status(400).json({ success: false, message: "Vendor email is required" });
     }
 
-    const image1 = req.files.image1 && req.files.image1[0];
-    const image2 = req.files.image2 && req.files.image2[0];
-    const image3 = req.files.image3 && req.files.image3[0];
-    const image4 = req.files.image4 && req.files.image4[0];
+    const image1 = req.files?.image1?.[0];
+    const image2 = req.files?.image2?.[0];
+    const image3 = req.files?.image3?.[0];
+    const image4 = req.files?.image4?.[0];
 
     const images = [image1, image2, image3, image4].filter(Boolean);
+    const imagesurl = images.map(img => img.path); // ✅ Already uploaded via multer-storage-cloudinary
 
-    // Upload images to cloudinary
-    const imagesurl = await Promise.all(
-      images.map(async (item) => {
-        const result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
-        return result.secure_url;
-      })
-    );
     const newProduct = new productmodel({
       name,
       description,
       category,
       subcategory,
-      price,
-      bestseller,
+      price: Number(price),
+      bestseller: bestseller === "true" || bestseller === true,
       sizes: JSON.parse(sizes),
       image: imagesurl,
       vendorEmail,

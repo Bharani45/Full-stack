@@ -5,20 +5,15 @@ const addproduct = async (req, res) => {
   try {
     const { name, description, price, category, subcategory, sizes, bestseller } = req.body;
 
-    const image1 = req.files.image1 && req.files.image1[0];
-    const image2 = req.files.image2 && req.files.image2[0];
-    const image3 = req.files.image3 && req.files.image3[0];
-    const image4 = req.files.image4 && req.files.image4[0];
+    const image1 = req.files?.image1?.[0];
+    const image2 = req.files?.image2?.[0];
+    const image3 = req.files?.image3?.[0];
+    const image4 = req.files?.image4?.[0];
 
     const images = [image1, image2, image3, image4].filter(Boolean);
 
-    // Upload images to cloudinary
-    const imagesurl = await Promise.all(
-      images.map(async (item) => {
-        const result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
-        return result.secure_url;
-      })
-    );
+    // Directly use the Cloudinary URLs provided by multer-storage-cloudinary
+    const imagesurl = images.map((img) => img.path); // ✅ Already uploaded by multer
 
     const productData = {
       name,
@@ -26,10 +21,10 @@ const addproduct = async (req, res) => {
       category,
       price: Number(price),
       subcategory,
-      bestseller: bestseller === "true" || bestseller === true, // handle string or boolean
+      bestseller: bestseller === "true" || bestseller === true,
       sizes: JSON.parse(sizes),
       image: imagesurl,
-      date: Date.now(), // Mongoose will override this if schema default is used
+      date: Date.now(),
     };
 
     const product = new productmodel(productData);
@@ -37,13 +32,12 @@ const addproduct = async (req, res) => {
 
     console.log("✅ Product saved:", product.name);
 
-    return res.json({ success: true, message: "Product added successfully!" }); // ✅ FIXED
+    return res.json({ success: true, message: "Product added successfully!" });
   } catch (error) {
     console.error("❌ Error adding product:", error.message);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
 
 const listproduct=async(req,res)=>{
     try {
