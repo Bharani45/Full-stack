@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import Title from '../components/title';
+import Title from '../components/Title';
 import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';

@@ -1,6 +1,6 @@
 import React from 'react'
 import { assets } from '../assets/assets'
-import Title from '../components/title'
+import Title from '../components/Title'
 import News from '../components/News'
 import { Link } from 'react-router-dom'
 function Contact() {
