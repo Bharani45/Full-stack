@@ -7,6 +7,7 @@ const vendorSchema = new mongoose.Schema({
   shopName: { type: String, required: true },
   phone: String,
   address: String,
+    bestseller: { type: Boolean, default: false },
   status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
   createdAt: { type: Date, default: Date.now }
 });

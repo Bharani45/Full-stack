@@ -6,10 +6,13 @@ import Title from './title';
 function BestSeller() {
     const {products}=useContext(ShopContext);
     const [bp,sbp]=useState([]);
-    useEffect(()=>{
-        const best=products.filter((item)=>(item.bestseller));
-        sbp(best.slice(0,5));
-    },[])
+useEffect(() => {
+  const best = products.filter(item =>
+    item.bestseller === true || item.bestseller === "true"  // ✅ handle both boolean and string
+  );
+  sbp(best.slice(0, 5));
+}, [products]);  // ✅ include products in dependency
+
   return (
 
     <div>

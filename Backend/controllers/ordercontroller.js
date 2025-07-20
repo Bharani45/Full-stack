@@ -167,7 +167,7 @@ const verifystripe = async (req, res) => {
       });
 
       await newOrder.save();
-      await usermodel.findByIdAndUpdate(userId, { cartdata: {} });
+    await usermodel.findByIdAndUpdate(userId, { cartdata: {} });
 
       return res.json({ success: true, orderId: newOrder._id });
     } else {

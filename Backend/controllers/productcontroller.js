@@ -11,9 +11,7 @@ const addproduct = async (req, res) => {
     const image4 = req.files?.image4?.[0];
 
     const images = [image1, image2, image3, image4].filter(Boolean);
-
-    // Directly use the Cloudinary URLs provided by multer-storage-cloudinary
-    const imagesurl = images.map((img) => img.path); // ✅ Already uploaded by multer
+    const imagesurl = images.map((img) => img.path);
 
     const productData = {
       name,
@@ -21,7 +19,7 @@ const addproduct = async (req, res) => {
       category,
       price: Number(price),
       subcategory,
-      bestseller: bestseller === "true" || bestseller === true,
+      bestseller: String(bestseller).toLowerCase() === "true",  // ✅ FIXED BOOLEAN CONVERSION
       sizes: JSON.parse(sizes),
       image: imagesurl,
       date: Date.now(),
@@ -31,7 +29,6 @@ const addproduct = async (req, res) => {
     await product.save();
 
     console.log("✅ Product saved:", product.name);
-
     return res.json({ success: true, message: "Product added successfully!" });
   } catch (error) {
     console.error("❌ Error adding product:", error.message);

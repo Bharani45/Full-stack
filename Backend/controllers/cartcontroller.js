@@ -72,5 +72,39 @@ const usercart = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+// Remove item or size from cart
+const removecart = async (req, res) => {
+  try {
+    const { itemId, size } = req.body;
+    const userId = req.userId;
 
-export { addcart, updatecart, usercart };
+    if (!itemId || !size) {
+      return res.status(400).json({ success: false, message: "Missing itemId or size" });
+    }
+
+    const userData = await usermodel.findById(userId);
+    if (!userData) return res.status(404).json({ success: false, message: "User not found" });
+
+    const cartdata = userData.cartdata || {};
+
+    if (cartdata[itemId] && cartdata[itemId][size] != null) {
+      delete cartdata[itemId][size]; // Remove that size
+      
+      // If no sizes left for that item, remove the item entirely
+      if (Object.keys(cartdata[itemId]).length === 0) {
+        delete cartdata[itemId];
+      }
+
+      await usermodel.findByIdAndUpdate(userId, { cartdata });
+      return res.json({ success: true, message: "Item removed from cart", cartdata });
+    } else {
+      return res.status(404).json({ success: false, message: "Item/Size not found in cart" });
+    }
+  } catch (error) {
+    console.error("Remove from cart error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+export { addcart, updatecart, usercart,removecart };

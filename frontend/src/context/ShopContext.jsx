@@ -113,6 +113,38 @@ const getcartamt=()=>{
   }
   return total;
 }
+const removeFromCart = async (itemId, size) => {
+  // 1. Update local state
+  setcart((prev) => {
+    const updated = { ...prev };
+    if (updated[itemId] && updated[itemId][size] !== undefined) {
+      delete updated[itemId][size];
+      if (Object.keys(updated[itemId]).length === 0) {
+        delete updated[itemId];
+      }
+    }
+    return updated;
+  });
+
+  // 2. Sync with backend
+  if (token) {
+    try {
+      const response = await axios.post(
+        `${backendurl}/api/cart/remove`,
+        { itemId, size },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (!response.data.success) {
+        toast.error("Backend cart remove failed");
+      }
+    } catch (error) {
+      console.error("Remove from cart failed:", error);
+      toast.error("Error removing item from server cart");
+    }
+  }
+};
+
 const getproduct = async () => {
   try {
     const response = await axios.get(backendurl + '/api/product/list');
@@ -164,7 +196,7 @@ const getproduct = async () => {
     cartitem,setcart,
     updateCartItem,
     getcartamt,navi,
-    backendurl,token,setTok
+    backendurl,token,setTok,removeFromCart
   };
 
   return (

@@ -1,14 +1,14 @@
-import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { bakendurl } from "../../../vendor/src/App";
-import React from "react";
 
 const OrderSuccess = () => {
   const [params] = useSearchParams();
   const userId = params.get("userId");
   const success = params.get("success");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const verifyStripePayment = async () => {
@@ -16,7 +16,6 @@ const OrderSuccess = () => {
         const amount = localStorage.getItem("stripe_amount");
         const address = JSON.parse(localStorage.getItem("stripe_address"));
 
-        // ⛔ Check if any is missing
         if (!amount || !address) {
           toast.error("Missing payment data.");
           return;
@@ -35,9 +34,13 @@ const OrderSuccess = () => {
         if (res.data.success) {
           toast.success("Payment verified and order placed!");
 
-          // Clear cart-related temp storage
           localStorage.removeItem("stripe_amount");
           localStorage.removeItem("stripe_address");
+
+          // ✅ Redirect to orders page after short delay
+          setTimeout(() => {
+            navigate("/orders");
+          }, 2000); // 2 seconds delay to show success message
         } else {
           toast.error("Payment failed or cancelled.");
         }
@@ -48,7 +51,7 @@ const OrderSuccess = () => {
     };
 
     if (userId && success !== null) verifyStripePayment();
-  }, [userId, success]);
+  }, [userId, success, navigate]);
 
   return (
     <div className="text-center mt-10">
