@@ -4,8 +4,7 @@ import LatestCollection from '../components/LatestCollection';
 import BestSeller from '../components/BestSeller';
 import OurPolicy from '../components/OurPolicy';
 import News from '../components/News';
-import Collection from './Collection';
-import Searchbar from '../components/Searchbar';
+
 function Home() {
   return <div>
     

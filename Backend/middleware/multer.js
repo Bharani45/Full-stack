@@ -8,7 +8,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET_KEY,
 });
 
-// Storage engine that uploads directly to Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {

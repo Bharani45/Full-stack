@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # 1. Backend API
+  backend:
+    build: ./Backend
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      # Connects to the 'mongo' service defined below
+      - MONGODB_URI=mongodb+srv://Bharani:Bharani*47477@cluster0.ebn5oqr.mongodb.net/backend
+      # Pass your other API keys here (or use an env_file)
+      - JWT_SECRET=greatstack
+      - CLOUDINARY_NAME=dgyhwvyzi
+      - CLOUDINARY_API_KEY=bLBQJ0i6hu62a862bCB3BGx-tF4
+      - CLOUDINARY_API_SECRET=bLBQJ0i6hu62a862bCB3BGx-tF4
+      - ADMIN_EMAIL=hello@gmail.com
+      - ADMIN_PASSWORD=qwerty123
+      - CLIENT_URL=http://localhost:5173
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+
+    depends_on:
+      - mongo
+    volumes:
+      - ./Backend:/app
+      - /app/node_modules
+
+  # 2. Frontend (User Store)
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_BACKEND_URL=http://localhost:4000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  # 3. Admin Panel
+  admin_panel:
+    build: ./adminss
+    ports:
+      - "5174:5174"
+    volumes:
+      - ./adminss:/app
+      - /app/node_modules
+
+  # 4. Vendor Panel
+  vendor_panel:
+    build: ./vendor
+    ports:
+      # Map host port 5175 to container port 5173 to avoid conflict
+      - "5175:5173"
+    volumes:
+      - ./vendor:/app
+      - /app/node_modules
+
+  # 5. Database
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

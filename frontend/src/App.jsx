@@ -16,11 +16,14 @@ import Footer from './components/Footer';
 import Searchbar from './components/Searchbar';
   import { ToastContainer, toast } from 'react-toastify';
 import VendorRegister from './pages/Vendorregister';
+import Test from './pages/Test';
+import ChatWidget from './pages/Chatwidget.jsx';
 function App() {
   return (
     <div>
       <ToastContainer/>
       <Navbar />
+      <ChatWidget chatUrl="http://localhost:3000/index.html" />
       <Searchbar/>
       <Routes>
         <Route path='/' element={<Home />} />
@@ -34,6 +37,7 @@ function App() {
         <Route path='/orders' element={<Orders />} />
         <Route path='/vendor-register' element={<VendorRegister />}/>
         <Route path="/order-success" element={<OrderSuccess />} />
+        <Route path='/test' element={<Test />} />
       </Routes>
       <Footer />
     

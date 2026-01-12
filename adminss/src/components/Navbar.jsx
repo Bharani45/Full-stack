@@ -28,15 +28,15 @@ function Navbar({ settoken }) {
       <img className="w-[140px]" src={assets.logo} alt="Logo" />
 
       <div className="flex items-center gap-6">
-        {/* Pending Icon with Badge */}
-        <div className="relative cursor-pointer">
+        {/* 🔗 Link to Pending Vendors Page with Icon and Badge */}
+        <Link to="/pending" className="relative cursor-pointer">
           <FaUserPlus size={24} className="text-gray-700" />
           {pendingCount > 0 && (
             <span className="absolute -top-2 -right-2 text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">
               {pendingCount}
             </span>
           )}
-        </div>
+        </Link>
 
         <button
           onClick={() => settoken('')}
