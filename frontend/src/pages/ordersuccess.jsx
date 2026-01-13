@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { bakendurl } from "../../../vendor/src/App";
+
+// FIX: Define the URL here instead of importing from vendor
+const bakendurl = import.meta.env.VITE_BACKEND_URL; 
 
 const OrderSuccess = () => {
   const [params] = useSearchParams();
@@ -40,7 +42,7 @@ const OrderSuccess = () => {
           // ✅ Redirect to orders page after short delay
           setTimeout(() => {
             navigate("/orders");
-          }, 2000); // 2 seconds delay to show success message
+          }, 2000); 
         } else {
           toast.error("Payment failed or cancelled.");
         }

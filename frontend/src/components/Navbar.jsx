@@ -5,13 +5,16 @@ import { ShopContext } from '../context/ShopContext';
 
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const {showsearch,setshowsearch,getcount,setTok,token,navi}=useContext(ShopContext);
+  // FIX 1: Destructure setcart to clear data on logout
+  const { showsearch, setshowsearch, getcount, setTok, token, navi, setcart } = useContext(ShopContext);
 
-  const logout=()=>{
+  const logout = () => {
     localStorage.removeItem('token');
     setTok('');
-    navi('/login')
+    setcart({}); // FIX 2: Clear the cart state immediately so data is gone
+    navi('/login');
   }
+
   return (
     <div className="bg-white px-6 py-4 shadow-md text-black">
       <div className="flex justify-between items-center">
@@ -28,25 +31,33 @@ function Navbar() {
 
         {/* Icons */}
         <div className="flex items-center space-x-4">
-          <img onClick={()=>setshowsearch(!showsearch)}src={assets.search_icon} alt="search" className="h-6 cursor-pointer" />
-          
-          {/* Profile dropdown */}
-        {/* Profile dropdown */}
-        <div className='group relative'>
-          <img src={assets.profile_icon} alt="profile" className="h-6 cursor-pointer" />
-          
-          {/* Show dropdown only if logged in */}
-             
-              <div className='group-hover:block hidden absolute right-0 pt-4 z-10'>
-                <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 rounded shadow-md transition-all'>
-                  <p className='cursor-pointer hover:bg-gray-200 px-2 py-1 rounded transition'>My Profile</p>
-                  <Link to='/orders'><p className='cursor-pointer hover:bg-gray-200 px-2 py-1 rounded transition'>Orders</p></Link>
-                  <p onClick={logout} className='cursor-pointer hover:bg-red-200 px-2 py-1 rounded transition text-red-600'>Logout</p>
-                </div>
-              </div>
-            
-          </div>
+          <img onClick={() => setshowsearch(!showsearch)} src={assets.search_icon} alt="search" className="h-6 cursor-pointer" />
 
+          {/* Profile dropdown */}
+          <div className='group relative'>
+            <img src={assets.profile_icon} alt="profile" className="h-6 cursor-pointer" />
+
+            {/* FIX 3: Conditional Rendering for Dropdown */}
+            <div className='group-hover:block hidden absolute right-0 pt-4 z-10'>
+              <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 rounded shadow-md transition-all'>
+                
+                {token ? (
+                  // If Logged In: Show Profile, Orders, Logout
+                  <>
+                    <p className='cursor-pointer hover:bg-gray-200 px-2 py-1 rounded transition'>My Profile</p>
+                    <Link to='/orders'><p className='cursor-pointer hover:bg-gray-200 px-2 py-1 rounded transition'>Orders</p></Link>
+                    <p onClick={logout} className='cursor-pointer hover:bg-red-200 px-2 py-1 rounded transition text-red-600'>Logout</p>
+                  </>
+                ) : (
+                  // If Logged Out: Show Login Only
+                  <Link to='/login'>
+                    <p className='cursor-pointer hover:bg-gray-200 px-2 py-1 rounded transition'>Login</p>
+                  </Link>
+                )}
+
+              </div>
+            </div>
+          </div>
 
           {/* Cart */}
           <Link to='/cart' className='relative inline-block'>
@@ -64,7 +75,6 @@ function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           />
         </div>
-
       </div>
 
       {/* Mobile Navigation Menu */}
