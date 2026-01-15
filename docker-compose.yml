@@ -1,40 +1,55 @@
+version: "3.8"
+
 services:
+  # 1. Backend API
   backend:
     build: ./Backend
     ports:
       - "4000:4000"
     env_file:
-      - .env
+      - ./Backend/.env   # Ensure this path points to where your .env actually is
     volumes:
       - ./Backend:/app
       - /app/node_modules
+    # FIXED: "seriver.js" typo in package.json would break this, so we run nodemon explicitly on server.js
+    command: sh -c "npm install && npx nodemon server.js"
 
+  # 2. Frontend (User Store)
   frontend:
     build: ./frontend
     ports:
       - "5173:5173"
     environment:
-      - VITE_BACKEND_URL=http://backend:4000
+      # FIXED: Browser needs localhost, not internal docker name
+      - VITE_BACKEND_URL=http://localhost:4000
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    # FIXED: Added --host to expose to Windows/Linux
+    command: sh -c "npm install && npm run dev -- --host"
 
+  # 3. Admin Panel
   admin_panel:
     build: ./adminss
     ports:
       - "5174:5174"
     environment:
-      - VITE_BACKEND_URL=http://backend:4000
+      - VITE_BACKEND_URL=http://localhost:4000
     volumes:
       - ./adminss:/app
       - /app/node_modules
+    # FIXED: Added --host
+    command: sh -c "npm install && npm run dev -- --host"
 
+  # 4. Vendor Panel
   vendor_panel:
     build: ./vendor
     ports:
-      - "5175:5173"
+      - "5175:5173" # Host 5175 → Container 5173
     environment:
-      - VITE_BACKEND_URL=http://backend:4000
+      - VITE_BACKEND_URL=http://localhost:4000
     volumes:
       - ./vendor:/app
       - /app/node_modules
+    # FIXED: Added --host
+    command: sh -c "npm install && npm run dev -- --host"
