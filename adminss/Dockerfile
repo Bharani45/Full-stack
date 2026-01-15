@@ -1,14 +1,8 @@
 FROM node:20-alpine
-
 WORKDIR /app
-
 COPY package*.json ./
-
 RUN npm install
-
 COPY . .
-
-# Your vite.config.js sets this to 5174
-EXPOSE 5174
-
+EXPOSE 5173
+# This starts the Vite dev server which matches your Compose setup
 CMD ["npm", "run", "dev", "--", "--host"]

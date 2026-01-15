@@ -15,18 +15,16 @@ services:
     command: sh -c "npm install && npx nodemon server.js"
 
   # 2. Frontend (User Store)
+# 2. Frontend (User Store)
   frontend:
     build: ./frontend
     ports:
       - "5173:5173"
     environment:
-      # FIXED: Browser needs localhost, not internal docker name
       - VITE_BACKEND_URL=http://localhost:4000
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    # FIXED: Added --host to expose to Windows/Linux
-    command: sh -c "npm install && npm run dev -- --host"
 
   # 3. Admin Panel
   admin_panel:
@@ -38,18 +36,14 @@ services:
     volumes:
       - ./adminss:/app
       - /app/node_modules
-    # FIXED: Added --host
-    command: sh -c "npm install && npm run dev -- --host"
 
   # 4. Vendor Panel
   vendor_panel:
     build: ./vendor
     ports:
-      - "5175:5173" # Host 5175 → Container 5173
+      - "5175:5173"
     environment:
       - VITE_BACKEND_URL=http://localhost:4000
     volumes:
       - ./vendor:/app
       - /app/node_modules
-    # FIXED: Added --host
-    command: sh -c "npm install && npm run dev -- --host"
